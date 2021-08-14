@@ -1,5 +1,5 @@
 ## <a id="table-of-contents">目录</a>
-1. [文件命名规范](#types)
+1. [目录文件命名规范](#types)
 1. [组件命名规范](#types)
 1. [函数命名规范](#references)
 1. [hooks命名规范](#objects)
@@ -177,68 +177,152 @@
 
 
 ## 组件命名与引用规范
-    1) 定义：
-        const CheckBox = () => {
-          return (
-            <div>内容1</div>
-          )
-        }
-        const CheckBoxMore = () => {
-            return (
-                <div>内容2</div>
-            )
-        }
-        export default ChexkBox;
-        export {
-            CheckBoxMore
-        }
-    2) 引用
-        import CheckBox, { CheckBoxMore } from './check-box';
-        <CheckBox />
-        <CheckBoxMore />
+- 文件夹名小写、语义化 `-` 分割, 英语单词不要用 `-` 分割
+  ```javascript
+  // bad
+  import Checkbox from './check-box'
+  import Dropdown from './drop-down'
+  import AutoComplete from './autocomplete'
 
+  // good
+  import Checkbox from './checkbox' 
+  import Dropdown from './dropdown'
+  import AutoComplete from './auto-complete' 
+  ```
+
+- 组件名、组件文件使用大驼峰，默认导出组件名称与文件名一致
+  ```javascript
+  /// file1 content
+  class Checkbox {
+    // ...
+  }
+  export default Checkbox
+  
+  // bad
+  import Checkbox from './checkBox'
+  import MyCheckbox from './Checkbox'
+
+  // good
+  import Checkbox from './Checkbox'
+  ```
+
+- 组件属性名为 [组件名Props]
+  ```javascript
+  interface CheckboxProps {
+    // ...
+  }
+  const Checkbox: React.FC<Props> = (props) => {
+    // ...
+  }
+  ```
+
+- 重写三方组件重名时、三方组件命名规则 [Source组件名]
+  ```javascript
+  import {Checkbox as SourceCheckbox} from 'antd'
+  import {CheckboxProps as SourceCheckboxProps} from 'antd/lib/checkbox'
+  interface CheckboxProps extends SourceCheckboxProps {
+    // ...
+  }
+  const Checkbox: React.FC<CheckboxProps> = (props) => {
+    return (
+      <Checkbox
+        {...props}
+      />
+    )
+  }
+  ```
 
 ## 函数及注释命名规范
-    // 切换时间选项卡 (type:时间类型)     【动宾结构：操作动作+动作内容】
-    changeTimeTab(type){}
-    // 打开人员列表详细弹框
-    openPersonListDetails(){}
+
+  - 命名方法： 小驼峰式命名法
+  - 命名规范： 前缀应该为动词
+  - 命名建议： 常用动词约定
+    
+  ### 动词含义
+  
+  |动词|含义|
+  |-|-|
+  |can|判断是否可执行某个动作|
+  |has|判断是否含有某个值|
+  |is|判断是否为某个值|
+  |get|获取某个值|
+  |set|设置某个值|
+  |load|加载某些数据|
+  |fetch|发送请求|
+
+  ```javascript
+  function canMove () {}
+  function hasAuth () {}
+  function isMan () {}
+  function getValue () {}
+  function setValue () {}
+  function loadData () {}
+  function fetchData () {}
+  ```
 
 
 ## hooks命名规范
-    const [personList, setPersonList] = useState([])
-    const [personObj, setPersonObj] = useReducer((state, data) => {
-        ...
-        return [...state, data];
-    }, {})
+
+  - 文件名 use-[hooks] 开始
+
 
 
 ## interface命名规范
-    // I+ 定义对象。必传值靠前，非必传值靠后; 重要内容靠前，次要内容靠后。
-    //【最好每个都写注释，不管是许久之后的自己维护，还是新员工维护，都能很快的理解上手，潜在的节约了时间成本】
-    interface IProps {
-        id:number           // 人员id
-        name?:string        // 人员名称
-    }
-    interface IPersonInfo {}
+  - 命名方式 [模块][类型]
+  - 定义参数 Param
+  - 定义记录 Record
+  - 定义详情 Detail
+  - 记录/详情参数不能出现非必选项
+  
+  ```typescript
+    /** 用户列表 **/
+    interface UserRecord {}
+    /** 用户详情 **/
+    interface UserDetail {}
+    /** 用户列表搜索参数 **/
+    interface UserParams {}
+  ```
 
 
 ## css命名规范
-  #### 1）公共文件命名
-  <p style="white-space: pre; margin-top: 0px;">
-    主要的 main.css 
-    基本共用 base.css
-    布局、版面 layout.css
-    主题 themes.css
-    专栏 columns.css
-    文字 font.css
-    表单 form.css
-    补丁 mend.css
-    打印 print.css
-  </p>
-
-  #### 2）间距
+  - 选择器小写，语义化使用 `-` 分割
+  ```scss
+    .app-card {}
   ```
+  - 类名与组件名一致
+  ```javascript
+    // block file
+    const Dashboard = () => {
+      // ...
+    }
+
+    // scss file
+    .dashboard {
+      // ...
+    }
+  ```
+  - 命名方式依block(块)+function(功能)命名
+  > block就是我们的组件块、function就是我们的按钮(btn)、图标(icon)等
+
+  ```scss
+    .card {
+      .card-title {
+        .card-title-icon {
+        }
+      }
+      .card-content {
+        // 内部再以块的形式拆解，不要再加父块做样式前缀
+        .subblock1 {
+          // ...
+        }
+      }
+    }
+  ```
+  1. block不能超过3级含3级，超出3级默认跟父级没有关系再依新的block命名
+  1. function唯一
+    
+  - 全局样式
+  ```scss
     .ml10 {
       margin-left: 10px;
     }
@@ -251,12 +335,16 @@
     .mb10 {
       margin-bottom: 10px;
     }
+    .text-align-center {
+      text-align: center;
+    }
+    .text-align-right {
+      text-align: right;
+    }
+    .fl {
+      float: left;
+    }
+    .fr {
+      float: right;
+    }
 ```
-
-
-## 建议
-    1)简写
-        样式、{key}、map、forEach、switch等
-    2)多使用ES6
-        扩展运算符、解构等
-
